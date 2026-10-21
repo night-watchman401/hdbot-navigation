@@ -1,0 +1,29 @@
+slam_toolbox:
+  ros__parameters:
+    solver_plugin: hdbot_gtsam_backend::GtsamSolver
+    gnss:
+      enabled: true
+      # Set true only after setting the calibrated ECEF-from-map transform below.
+      georeference_ready: false
+      ecef_from_map_translation_m: [0.0, 0.0, 0.0]
+      ecef_from_map_quaternion_xyzw: [0.0, 0.0, 0.0, 1.0]
+      # User will adjust the antenna model. This parameter is body-origin -> antenna.
+      lever_arm_body_m: [0.0, 0.0, 0.0]
+      body_from_imu_quaternion_xyzw: [0.0, 0.0, 0.0, 1.0]
+      gyro_bias_imu_radps: [0.0, 0.0, 0.0]
+      antenna_frame: gnss_antenna
+      imu_frame: imu_link
+      imu_topic: /imu
+      odom_topic: /odom
+      doppler_topic: /gnss/doppler
+      sensor_sync_tolerance_s: 0.15
+      pose_sync_tolerance_s: 0.15
+      max_epoch_gap_s: 3.0
+      minimum_satellites: 4
+      max_epochs: 2000
+      optimization_period_s: 1.0
+      # Soft wheel-speed/no-slip model. Wheel data also affect the SLAM frontend;
+      # these inflated sigmas are an approximation, not independent evidence.
+      body_velocity_sigmas_mps: [0.15, 0.15, 0.10]
+      anchor_sigmas_xy_yaw: [0.05, 0.05, 3.14]
+      huber: 1.345

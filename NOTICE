@@ -1,0 +1,9 @@
+HDBot 建图与巡检模块
+Copyright 2026 hd
+
+本项目五个发布模块由项目维护者确认自主开发，采用 Apache License 2.0。
+
+GTSAM、slam_toolbox/Karto、Nav2、ROS 2、OpenCV 等为外部依赖，
+不包含在本项目的自主开发声明中，其许可分别适用。
+Python 测试模板中已有的 Open Source Robotics Foundation 版权与许可声明保留。
+外部依赖列表见 THIRD_PARTY.md。

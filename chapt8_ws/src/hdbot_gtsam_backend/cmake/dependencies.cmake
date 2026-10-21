@@ -1,0 +1,2 @@
+include(CMakeFindDependencyMacro)
+find_dependency(Boost COMPONENTS serialization thread)

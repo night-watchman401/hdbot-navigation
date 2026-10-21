@@ -1,0 +1,6 @@
+<library path="hdbot_gtsam_solver">
+  <class name="hdbot_gtsam_backend::GtsamSolver"
+         type="hdbot_gtsam_backend::GtsamSolver" base_class_type="karto::ScanSolver">
+    <description>Planar GTSAM graph with official DopplerFactorArm adapter.</description>
+  </class>
+</library>

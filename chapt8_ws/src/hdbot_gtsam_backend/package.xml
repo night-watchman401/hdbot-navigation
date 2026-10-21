@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>hdbot_gtsam_backend</name><version>0.1.0</version>
+  <description>Planar slam_toolbox solver using official GTSAM DopplerFactorArm.</description>
+  <maintainer email="1363508082@qq.com">hd</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>gtsam</depend><depend>slam_toolbox</depend><depend>pluginlib</depend>
+  <depend>boost</depend>
+  <depend>rclcpp</depend><depend>rclcpp_lifecycle</depend>
+  <depend>sensor_msgs</depend><depend>nav_msgs</depend><depend>geometry_msgs</depend>
+  <depend>hdbot_gnss_msgs</depend><depend>tf2_ros</depend><depend>tf2_geometry_msgs</depend>
+  <exec_depend>launch_ros</exec_depend><exec_depend>lifecycle_msgs</exec_depend>
+  <exec_depend>launch</exec_depend><exec_depend>ament_index_python</exec_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

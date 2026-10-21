@@ -1,0 +1,16 @@
+patrol_node:
+  ros__parameters:
+    # Gazebo 仿真需使用仿真时间；连接实车时改为 false。
+    use_sim_time: true
+    # 自动创建保存目录；空字符串表示启动命令所在目录。
+    image_save_path: './patrol_images'
+    image_max_age_s: 2.0
+    # 初始位姿和目标点均为地图坐标，单位依次为米、米、弧度。
+    initial_point: [0.0, 0.0, 0.0]
+    target_points: [
+      0.0,0.0,0.0,
+      1.0,2.0,3.14,
+      -4.5,1.5,1.57,
+      -8.0,-5.0,1.57,
+      1.0,-5.0,3.14,
+      ]
