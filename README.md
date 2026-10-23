@@ -1,32 +1,53 @@
-# HDBot 建图与巡检模块
+# nav2_custom_planner
 
-基于 ROS 2 Jazzy 的二维建图优化、Nav2 插件与巡检模块。仓库发布范围为下表五个包；GTSAM、ROS 2、Nav2 和 slam_toolbox 是外部依赖，不随本项目分发。本地机器人模型、地图及整机演示包不属于发布内容。
+ROS 2 Jazzy 全局规划插件，支持直线、A*、Theta*、Dijkstra 规划。
 
-| 软件包 | 功能 |
+## 配置
+
+将以下片段合并到 Nav2 的参数文件：
+
+```yaml
+planner_server:
+  ros__parameters:
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_custom_planner/CustomPlanner"
+      algorithm: "A_STAR"
+      interpolation_resolution: 0.1
+      allow_unknown: false
+```
+
+`algorithm` 可选值：
+
+| 值 | 行为 |
 | --- | --- |
-| `hdbot_gtsam_backend` | Karto 求解器插件、二维多普勒适配、观测关联与批量优化 |
-| `hdbot_gnss_msgs` | 原始 GNSS 多普勒消息接口 |
-| `nav2_custom_planner` | 直线采样规划与路径点栅格检查 |
-| `nav2_custom_controller` | 简单路径跟随控制器 |
-| `autopartol_robot` | 多目标点循环巡检与图像记录 |
+| `STRAIGHT` | 直线规划，遇障碍失败；默认值，兼容原配置 |
+| `A_STAR` | 八邻域 A*，欧氏距离启发式，搜索绕障路径 |
+| `THETA_STAR` | Theta*，在 A* 搜索中使用父节点视线连接，生成任意角度路径 |
+| `DIJKSTRA` | 八邻域 Dijkstra，不使用启发式 |
 
-## 安装与使用
+参数在 configure 时读取，修改后需重新配置或重启 planner_server。
+也可以配置三个插件实例，分别设置三种 algorithm，调用 Nav2 规划动作时通过 planner_id 选择实例。
 
-- [依赖安装和构建](docs/INSTALL.md)：Ubuntu 24.04、ROS 2 Jazzy、固定版本 GTSAM。
-- [模块接入与使用](docs/USAGE.md)：传感器、Nav2 配置、巡检参数与故障排查。
-- [后端模型和限制](chapt8_ws/src/hdbot_gtsam_backend/README.md)。
-- [规划器说明](chapt8_ws/src/nav2_custom_planner/README.md)。
-- [验证记录](docs/VALIDATION.md)。
-- [来源与许可证范围](THIRD_PARTY.md)。
+`interpolation_resolution` 为输出路径最大点间距（米），必须为有限正数。
+`allow_unknown` 控制是否允许经过未知栅格，默认禁止。
+所有模式都禁止经过致命障碍和内切膨胀障碍（代价 253、254），禁止斜向穿过障碍角点。
+线段检查遍历经过的栅格，不依赖输出采样间距。搜索优化几何距离，不对可通行栅格的膨胀代价值加权。
+碰撞检查基于栅格，完整机器人足迹的安全距离应由代价地图膨胀层配置保证。
 
-## 能力与验证范围
+路径保留精确起点、目标及目标朝向，中间点沿路径朝向。搜索、插值和碰撞检查均支持取消；无路可达时抛出 Nav2 规划异常。
 
-后端保留前端相对位姿观测及源坐标系下的完整协方差，使用车轮速度/无侧滑软约束与 GNSS 多普勒联合优化。GNSS 地理参考默认关闭，需标定后显式启用。软件不提供接收机驱动、星历传播或自动地理标定。
+## 构建与测试
 
-规划器不搜索绕障路线，控制器不提供完整局部碰撞预测。后端采用批量优化；尚未完成真实 GNSS 数据性能评估和完整 Gazebo 端到端验证。
+在工作空间根目录执行：
 
-## 发布范围和许可证
+```bash
+source /opt/ros/jazzy/setup.bash
+colcon build --packages-select nav2_custom_planner --symlink-install
+source install/setup.bash
+colcon test --packages-select nav2_custom_planner
+colcon test-result --verbose
+```
 
-本项目五个发布模块采用 [Apache-2.0](LICENSE)，版权信息见 [NOTICE](NOTICE)。GTSAM 等外部依赖采用各自的许可证，说明见 [THIRD_PARTY.md](THIRD_PARTY.md)。
-
-
+`planner_smoke` 使用真实 ROS 节点和 Costmap2D，检查三种搜索模式的绕障、路径端点、路径点通行性、无路可达、取消和禁止斜向穿角。
+完整导航效果仍需在机器人或仿真中验证。
